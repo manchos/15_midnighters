@@ -1,10 +1,7 @@
 import requests
 import logging
-import argparse
-import os
 from datetime import datetime
 from pytz import timezone
-import pytz
 from collections import defaultdict
 
 logging.basicConfig(level=logging.ERROR)
@@ -20,17 +17,8 @@ def get_solution_attempts_page_json(page_number,
         return None
 
 
-def get_pages_amount(url='http://devman.org/api/challenges/solution_attempts/'):
-    try:
-        response = requests.get(url)
-        return response.json()['number_of_pages']
-    except (ConnectionError, requests.exceptions.ConnectionError) as exc:
-        logging.error(exc)
-        return None
-
-
 def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/'):
-    attempts_pages_amount = get_pages_amount(url)
+    attempts_pages_amount = get_solution_attempts_page_json(1, url)['number_of_pages']
     for page_number in range(1, attempts_pages_amount + 1):
         for solution_attempt in get_solution_attempts_page_json(page_number, url)['records']:
             yield solution_attempt
@@ -62,7 +50,6 @@ def print_midnighters(midnighters_dict):
             print('\t{}'.format(attempt))
 
 if __name__ == '__main__':
-
     solution_attempts = load_solution_attempts(
         url='http://devman.org/api/challenges/solution_attempts/', )
     midnighters_dict = get_midnighters_dict(solution_attempts)
