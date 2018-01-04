@@ -66,12 +66,11 @@ def get_midnighters_dict(solution_attempts):
 
 
 def print_midnighters(midnighters_dict):
-    print("\nDevman midnighters working from 0.00 till 5.00:\n")
+    print("\nDevman midnighters who uploaded homeworks to devman between 0am and 5am:\n")
     for midnighter_name, midnighter_attemps_list in midnighters_dict.items():
         print(midnighter_name)
         for attempt in midnighter_attemps_list:
             print('\t{}'.format(attempt))
-        print('\n')
 
 
 def set_cli_argument_parse():
