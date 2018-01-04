@@ -27,7 +27,7 @@ id460393476
 	03.01.2018 01:06:03 MSK+0300
 	03.01.2018 00:59:58 MSK+0300
 	02.01.2018 01:06:45 MSK+0300
-
+```
 # Project Goals
 
 The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
