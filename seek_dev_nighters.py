@@ -17,9 +17,10 @@ def get_solution_attempts_page_json(page_number,
         return None
 
 
-def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/'):
-    attempts_pages_amount = get_solution_attempts_page_json(1, url)['number_of_pages']
-    for page_number in range(1, attempts_pages_amount + 1):
+def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/', one=1):
+    # one = 1 special for Wallie
+    attempts_pages_amount = get_solution_attempts_page_json(one, url)['number_of_pages']
+    for page_number in range(one, attempts_pages_amount + one):
         for solution_attempt in get_solution_attempts_page_json(page_number, url)['records']:
             yield solution_attempt
 
