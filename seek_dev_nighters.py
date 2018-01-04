@@ -10,38 +10,32 @@ from collections import defaultdict
 
 logging.basicConfig(level=logging.ERROR)
 
-SOLUTION_ATTEMPTS_URL = 'http://devman.org/api/challenges/solution_attempts/'
 
-
-def get_solution_attempts_page_json(page_number, url=SOLUTION_ATTEMPTS_URL):
-    headers = {'User-agent': 'Mozilla/5.0', 'Accept-Encoding': 'gzip'}
+def get_solution_attempts_page_json(page_number,
+                                    url='http://devman.org/api/challenges/solution_attempts/'):
     try:
         page_url = '{}?page={}'.format(url, page_number)
-        response = requests.get(page_url, headers=headers)
-        logging.info(
-            'The page: {} get from {}'.format(
-                page_url, 
-                'cache' if response.from_cache else 'download online')
-        )
+        response = requests.get(page_url)
+        logging.info('The page: {} get from {}'.format(page_url,
+            'cache' if response.from_cache else 'download online'))
         return response.json()
     except (ConnectionError, requests.exceptions.ConnectionError) as exc:
         logging.error(exc)
         return None
 
 
-def get_pages_amount(url=SOLUTION_ATTEMPTS_URL):
-    headers = {'User-agent': 'Mozilla/5.0', 'Accept-Encoding': 'gzip'}
+def get_pages_amount(url='http://devman.org/api/challenges/solution_attempts/'):
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url)
         return response.json()['number_of_pages']
     except (ConnectionError, requests.exceptions.ConnectionError) as exc:
         logging.error(exc)
         return None
 
 
-def load_solution_attempts(url=SOLUTION_ATTEMPTS_URL):
+def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/'):
     attempts_pages_amount = get_pages_amount(url)
-    for page_number in range(1, attempts_pages_amount+1):
+    for page_number in range(1, attempts_pages_amount + 1):
         for solution_attempt in get_solution_attempts_page_json(page_number, url)['records']:
             yield solution_attempt
 
@@ -72,31 +66,9 @@ def print_midnighters(midnighters_dict):
         for attempt in midnighter_attemps_list:
             print('\t{}'.format(attempt))
 
-
-def set_cli_argument_parse():
-    parser = argparse.ArgumentParser(description='Displays midnighters from devman.org')
-    parser.add_argument('-cachetime', '--cache_time', default=600, type=int,
-                        dest='cache_time', help='Set cache time interval')
-    parser.add_argument('-clearcache', '--clear_cache', 
-                        action='store_true', help='Clear cache file')
-    return parser.parse_args()
-
 if __name__ == '__main__':
-    args = set_cli_argument_parse()
-
-    if not os.path.exists('_cache'):
-        os.mkdir('_cache')
-
-    requests_cache.install_cache(
-        '_cache/page_cache',
-        backend='sqlite',
-        expire_after=args.cache_time,
-    )
-    if args.clear_cache:
-        requests_cache.clear()
 
     solution_attempts = load_solution_attempts(
-        url=SOLUTION_ATTEMPTS_URL,
-    )
+        url='http://devman.org/api/challenges/solution_attempts/', )
     midnighters_dict = get_midnighters_dict(solution_attempts)
     print_midnighters(midnighters_dict)
