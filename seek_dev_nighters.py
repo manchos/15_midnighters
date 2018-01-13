@@ -17,10 +17,12 @@ def get_solution_attempts_page_json(page_number,
         return None
 
 
-def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/', one=1):
-    # one = 1 special for Wallie
-    attempts_pages_amount = get_solution_attempts_page_json(one, url)['number_of_pages']
-    for page_number in range(one, attempts_pages_amount + one):
+def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/', one=1, two=2):
+    page_one = get_solution_attempts_page_json(one, url)
+    attempts_pages_amount = page_one['number_of_pages']+one
+    for solution_attempt in page_one['records']:
+        yield solution_attempt
+    for page_number in range(two, attempts_pages_amount):
         for solution_attempt in get_solution_attempts_page_json(page_number, url)['records']:
             yield solution_attempt
 
@@ -30,7 +32,10 @@ def get_midnighter_name_and_attempt_time(solution_attempt, midnighters_time_seco
                                       timezone(solution_attempt['timezone']))
     midnight = local_dt.replace(hour=0, minute=0, second=0)
     if 0 < (local_dt - midnight).seconds < midnighters_time_seconds_duration:
-        return {'username': solution_attempt['username'], 'attempt_time': local_dt}
+        return {
+            'username': solution_attempt['username'],
+            'attempt_time': local_dt
+        }
 
 
 def get_midnighters_dict(solution_attempts):
