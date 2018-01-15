@@ -7,24 +7,24 @@ from collections import defaultdict
 logging.basicConfig(level=logging.ERROR)
 
 
-def get_solution_attempts_page_json(page_number,
-                                    url='http://devman.org/api/challenges/solution_attempts/'):
+def get_solution_attempts_page_json(page_number, url):
     try:
         response = requests.get(url, params={'page': page_number})
-        return response.json()
+        if response.ok:
+            return response.json()
     except (ConnectionError, requests.exceptions.ConnectionError) as exc:
         logging.error(exc)
         return None
 
 
-def load_solution_attempts(url='http://devman.org/api/challenges/solution_attempts/', one=1, two=2):
-    page_one = get_solution_attempts_page_json(one, url)
-    attempts_pages_amount = page_one['number_of_pages']+one
-    for solution_attempt in page_one['records']:
-        yield solution_attempt
-    for page_number in range(two, attempts_pages_amount):
-        for solution_attempt in get_solution_attempts_page_json(page_number, url)['records']:
+def load_solution_attempts(url, one=1):
+    page_number = one
+    response = get_solution_attempts_page_json(page_number, url)
+    while response is not None:
+        for solution_attempt in response['records']:
             yield solution_attempt
+        page_number += 1
+        response = get_solution_attempts_page_json(page_number, url)
 
 
 def get_midnighter_name_and_attempt_time(solution_attempt, midnighters_time_seconds_duration=18000):
@@ -43,8 +43,8 @@ def get_midnighters_dict(solution_attempts):
     for attempt in solution_attempts:
         attempt_dict = get_midnighter_name_and_attempt_time(attempt)
         if attempt_dict is not None:
-            username, attempt_time = attempt_dict.values()
-            midnighters[username].append(attempt_time.strftime('%d.%m.%Y %H:%M:%S %Z%z'))
+            attempt_time = attempt_dict['attempt_time'].strftime('%d.%m.%Y %H:%M:%S %Z%z')
+            midnighters[attempt_dict['username']].append(attempt_time)
     return midnighters
 
 
@@ -54,6 +54,7 @@ def print_midnighters(midnighters_dict):
         print('\n{}'.format(midnighter_name))
         for attempt in midnighter_attemps_list:
             print('\t{}'.format(attempt))
+
 
 if __name__ == '__main__':
     solution_attempts = load_solution_attempts(
