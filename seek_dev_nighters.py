@@ -17,8 +17,8 @@ def get_solution_attempts_page_json(page_number, url):
         return None
 
 
-def load_solution_attempts(url, one=1):
-    page_number = one
+def load_solution_attempts(url):
+    page_number = 1
     response = get_solution_attempts_page_json(page_number, url)
     while response is not None:
         for solution_attempt in response['records']:
