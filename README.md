@@ -5,13 +5,8 @@ Displays midnighters from devman.org
 # Using
 
 Run the script
-```#!bash
+```
 $ python seek_dev_nighters.py
-
-optional arguments:
-  -h, --help                Show this help message and exit
-  -cachetime CACHE_TIME     Set cache time interval
-  -clearcache               Clear cache file
 
 Devman midnighters who uploaded homeworks to devman between 0am and 5am:
 
