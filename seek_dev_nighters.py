@@ -19,12 +19,13 @@ def get_solution_attempts_page_json(page_number, url):
 
 def load_solution_attempts(url):
     page_number = 1
-    response = get_solution_attempts_page_json(page_number, url)
-    while response is not None:
+    while page_number:
+        response = get_solution_attempts_page_json(page_number, url)
         for solution_attempt in response['records']:
             yield solution_attempt
         page_number += 1
-        response = get_solution_attempts_page_json(page_number, url)
+        if page_number > response['number_of_pages']:
+            break
 
 
 def get_midnighter_name_and_attempt_time(solution_attempt, midnighters_time_seconds_duration=18000):
