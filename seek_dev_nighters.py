@@ -28,10 +28,15 @@ def load_solution_attempts(url):
             break
 
 
-def get_midnighter_name_and_attempt_time(solution_attempt, midnighters_time_seconds_duration=18000):
+def get_midnighter_name_and_attempt_time(
+        solution_attempt, midnighters_time_seconds_duration=18000):
     local_dt = datetime.fromtimestamp(solution_attempt['timestamp'],
                                       timezone(solution_attempt['timezone']))
-    midnight = local_dt.replace(hour=0, minute=0, second=0)
+    midnight = local_dt.replace(
+        hour=0,
+        minute=0,
+        second=0
+    )
     if 0 < (local_dt - midnight).seconds < midnighters_time_seconds_duration:
         return {
             'username': solution_attempt['username'],
@@ -44,13 +49,15 @@ def get_midnighters_dict(solution_attempts):
     for attempt in solution_attempts:
         attempt_dict = get_midnighter_name_and_attempt_time(attempt)
         if attempt_dict is not None:
-            attempt_time = attempt_dict['attempt_time'].strftime('%d.%m.%Y %H:%M:%S %Z%z')
+            attempt_time = attempt_dict['attempt_time'].strftime(
+                '%d.%m.%Y %H:%M:%S %Z%z')
             midnighters[attempt_dict['username']].append(attempt_time)
     return midnighters
 
 
 def print_midnighters(midnighters_dict):
-    print("\nDevman midnighters who uploaded homeworks to devman between 0am and 5am:")
+    print("\nDevman midnighters who uploaded homeworks "
+          "to devman between 0am and 5am:")
     for midnighter_name, midnighter_attemps_list in midnighters_dict.items():
         print('\n{}'.format(midnighter_name))
         for attempt in midnighter_attemps_list:
