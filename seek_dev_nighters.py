@@ -30,8 +30,10 @@ def load_solution_attempts(url):
 
 def get_midnighter_name_and_attempt_time(
         solution_attempt, midnighters_time_seconds_duration=18000):
-    local_dt = datetime.fromtimestamp(solution_attempt['timestamp'],
-                                      timezone(solution_attempt['timezone']))
+    local_dt = datetime.fromtimestamp(
+        solution_attempt['timestamp'],
+        timezone(solution_attempt['timezone'])
+    )
     midnight = local_dt.replace(
         hour=0,
         minute=0,
